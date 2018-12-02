@@ -229,11 +229,11 @@ TextClock::Draw(BView* view, int32 frame)
 		view->SetLowColor(kBlack);
 		view->FillRect(view->Bounds());
 		// Set text color
-		text = {120+rand()%135, 120+rand()%135, 120+rand()%135};
+		text = {200+rand()%55, 200+rand()%55, 200+rand()%55};
 		view->SetHighColor(text);
 		view->DrawString(IT, fLeftCorner, 0);
 	}
-	text = {120+rand()%135, 120+rand()%135, 120+rand()%135};
+	text = {200+rand()%55, 200+rand()%55, 200+rand()%55};
 	view->SetHighColor(text);
 	BPoint copy = fLeftCorner;
 	copy.Set(fLeftCorner.x + fSpace, fLeftCorner.y);
@@ -243,107 +243,107 @@ TextClock::Draw(BView* view, int32 frame)
 	// are rather inconsistent...
 
 	// The "fSpace * NUMBER" parts were a result of a painful trial and error.
-	HALF_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	HALF_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	copy += BPoint(fSpace, 0);
 	view->DrawString(HALF, copy, 0);
 
-	TEN1_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	TEN1_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	copy += BPoint(fSpace * 3, 0);
 	view->DrawString(TEN1, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	QUARTER_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	QUARTER_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(QUARTER, copy, 0);
 
-	TWENTY_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	TWENTY_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	copy += BPoint(fSpace * 3.5, 0);
 	view->DrawString(TWENTY, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	FIVE1_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	FIVE1_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(FIVE1, copy, 0);
 	copy += BPoint(fSpace * 2, 0);
 
-	MINUTES_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	MINUTES_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(MINUTES, copy, 0);
 	copy += BPoint(fSpace * 3.5, 0);
 
-	TO_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	TO_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TO, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	PAST_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	PAST_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(PAST, copy, 0);
 	copy += BPoint(fSpace * 2, 0);
 
-	TWO_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	TWO_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TWO, copy, 0);
 	copy += BPoint(fSpace * 2.2, 0);
 
-	THREE_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	THREE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(THREE, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	ONE_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	ONE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(ONE, copy, 0);
 	copy += BPoint(fSpace * 2.75, 0);
 
-	FOUR_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	FOUR_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(FOUR, copy, 0);
 	copy += BPoint(fSpace * 2.2, 0);
 
-	FIVE2_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	FIVE2_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(FIVE2, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	SIX_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	SIX_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(SIX, copy, 0);
 	copy += BPoint(fSpace * 1.5, 0);
 
-	SEVEN_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	SEVEN_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(SEVEN, copy, 0);
 	copy += BPoint(fSpace * 2.75, 0);
 
-	EIGHT_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	EIGHT_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(EIGHT, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	NINE_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	NINE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(NINE, copy, 0);
 	copy += BPoint(fSpace * 2, 0);
 
-	TEN2_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	TEN2_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TEN2, copy, 0);
 	copy += BPoint(fSpace * 1.8, 0);
 
-	ELEVEN_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	ELEVEN_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(ELEVEN, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	TWELVE_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	TWELVE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TWELVE, copy, 0);
 
-	OCLOCK_ON ? text = {120+rand()%135, 120+rand()%135, 120+rand()%135} : text = kGray;
+	OCLOCK_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
 	view->SetHighColor(text);
 	copy += BPoint(fSpace * 3.35, 0);
 	view->DrawString(OCLOCK, copy, 0);

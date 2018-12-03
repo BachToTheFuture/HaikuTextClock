@@ -1,6 +1,6 @@
 # HaikuTextClock
 ### by BachToTheFuture, copyright 2018
-A Haiku screen saver that shows a text/word clock. Tested on x86_64 Haiku Beta.
+**A Haiku screen saver that shows a text/word clock.** Tested on x86_64 Haiku Beta.
 
 Design inspiration from https://github.com/brobergp/MMM-TextClock. Thank you, brobergp!
 

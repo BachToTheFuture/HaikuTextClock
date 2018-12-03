@@ -12,11 +12,25 @@
 #include <string>
 #include <stdlib.h>
 
+#include <Slider.h>
+#include <Alignment.h>
+#include <String.h>
 #include <Catalog.h>
 #include <Font.h>
 #include <StringView.h>
 #include <View.h>
 #include <LayoutBuilder.h>
+#include <Window.h>
+
+
+static const int32 kMinRed = 'minr';
+static const int32 kMaxRed = 'maxr';
+static const int32 kMinBlue = 'minb';
+static const int32 kMaxBlue = 'maxb';
+static const int32 kMinGreen = 'ming';
+static const int32 kMaxGreen = 'maxg';
+static const int32 kTickSpeed = 'tick';
+
 
 BScreenSaver*
 instantiate_screen_saver(BMessage* message, image_id image)
@@ -75,19 +89,168 @@ TextClock::TextClock(BMessage* archive, image_id id)
 	ELEVEN_ON = false;
 	TWELVE_ON = false;
 	OCLOCK_ON = false;
+
+	fMinRed = 10;
+	fMaxRed = 255;
+	fMinBlue = 10;
+	fMaxBlue = 255;
+	fMinGreen = 10;
+	fMaxGreen = 255;
+	fTickSpeed = 10000;
+
+	fMinRed = archive->GetInt32("min_red", fMinRed);
+	fMaxRed = archive->GetInt32("max_red", fMaxRed);
+	fMinBlue = archive->GetInt32("min_blue", fMinBlue);
+	fMaxBlue = archive->GetInt32("max_blue", fMaxBlue);
+	fMinGreen = archive->GetInt32("min_green", fMinGreen);
+	fMaxGreen = archive->GetInt32("max_green", fMaxGreen);
+	fTickSpeed = archive->GetInt32("tick_speed", fTickSpeed);
+
 }
 
 
 void TextClock::StartConfig(BView* view)
 {
-	// Uh, not sure how I make this not centered...
-	BStringView* v1 = new BStringView("name_and_author", "TextClock by Bach Nguyen");
-	v1->SetFont(be_bold_font);
+	// Thank you, PulkoMandy, for your Neonlights screensaver!
+	// This function is a modified version of Neonlight's
+	// StartConfig function.
+	BSlider* s0;
+	BSlider* s1;
+	BSlider* s2;
+	BSlider* s3;
+	BSlider* s4;
+	BSlider* s5;
+	BSlider* s6;
+	BSlider* s7;
 
-	BLayoutBuilder::Group<>(view, B_VERTICAL)
+	BWindow* win = view->Window();
+	if (win)
+		win->AddHandler(this);
+
+	BStringView* v1 = new BStringView("name", "Haiku TextClock");
+	v1->SetFont(be_bold_font);
+	BStringView* v2 = new BStringView("author", "by Bach Nguyen");
+
+	BStringView* v3 = new BStringView("tick_speed", "Tick speed");
+	v3->SetFont(be_bold_font);
+
+	s0 = new BSlider("tick_speed", "", new BMessage(kTickSpeed), 1000, 60000, B_HORIZONTAL);
+	s0->SetValue(fTickSpeed);
+	s0->SetTarget(this);
+	s0->SetLimitLabels("Fast", "Slow");
+
+	s1 = new BSlider("min_red", "Red min", new BMessage(kMinRed), 1, 10, B_HORIZONTAL);
+	s1->SetValue(fMinRed);
+	s1->SetTarget(this);
+	s1->SetLimitLabels("0", "10");
+
+	s2 = new BSlider("max_red", "Red max", new BMessage(kMaxRed), 11, 254, B_HORIZONTAL);
+	s2->SetValue(fMaxRed);
+	s2->SetTarget(this);
+	s2->SetLimitLabels("11", "255");
+
+	s3 = new BSlider("min_green", "Green min", new BMessage(kMinGreen), 1, 10, B_HORIZONTAL);
+	s3->SetValue(fMinGreen);
+	s3->SetTarget(this);
+	s3->SetLimitLabels("0", "10");
+
+	s4 = new BSlider("max_green", "Green max", new BMessage(kMaxGreen), 11, 254, B_HORIZONTAL);
+	s4->SetValue(fMaxGreen);
+	s4->SetTarget(this);
+	s4->SetLimitLabels("11", "255");
+
+	s5 = new BSlider("min_blue", "Blue min", new BMessage(kMinBlue), 0, 10, B_HORIZONTAL);
+	s5->SetValue(fMinBlue);
+	s5->SetTarget(this);
+	s5->SetLimitLabels("0", "10");
+
+	s6 = new BSlider("max_blue", "Blue max", new BMessage(kMaxBlue), 11, 254, B_HORIZONTAL);
+	s6->SetValue(fMaxBlue);
+	s6->SetTarget(this);
+	s6->SetLimitLabels("11", "255");
+
+
+	BLayoutBuilder::Group<>(view, B_VERTICAL, B_USE_ITEM_SPACING)
 		.SetInsets(B_USE_WINDOW_INSETS)
-		.Add(v1)
+		.SetExplicitAlignment(BAlignment(B_ALIGN_HORIZONTAL_CENTER, B_ALIGN_TOP))
+		.AddGroup(B_HORIZONTAL)
+			.Add(v1)
+			.Add(v2)
+			.AddGlue()
+		.End()
+		.Add(v3)
+		.Add(s0)
+		.AddGlue()
+		.Add(s1)
+		.Add(s2)
+		.AddGlue()
+		.Add(s3)
+		.Add(s4)
+		.AddGlue()
+		.Add(s5)
+		.Add(s6)
+		.AddGlue()
 		.End();
+}
+
+
+void
+TextClock::NewColor()
+{
+	fTextColor1 = {fMinRed+rand()%fMaxRed, fMinGreen+rand()%fMaxGreen, fMinBlue+rand()%fMaxBlue};
+	fTextColor2 = {fMinRed+rand()%fMaxRed, fMinGreen+rand()%fMaxGreen, fMinBlue+rand()%fMaxBlue};
+	fTextColor3 = {fMinRed+rand()%fMaxRed, fMinGreen+rand()%fMaxGreen, fMinBlue+rand()%fMaxBlue};
+	// The time duration (in frames)
+	fColor1Duration = 100+rand()%400;
+	fColor2Duration = 100+rand()%400;
+	fColor3Duration = 100+rand()%400;
+}
+
+
+void
+TextClock::UpdateColor()
+{
+	// Randomly change colors of the text.
+	rgb_color* colors[3] = {
+		&fTextColor1, &fTextColor2, &fTextColor3
+	};
+	int durations[3] = {fColor1Duration, fColor2Duration, fColor3Duration};
+	int* randoms[3] = {&fRandom1, &fRandom2, &fRandom3};
+
+	int test;
+	int n;
+	for (n = 0; n < 3; n++) {
+		if (fFrame % durations[n] == 0)
+		{
+			test = rand()%6;
+			*randoms[n] = test;
+		}
+		else test = *randoms[n];
+
+		if (colors[n]->red <= fMinRed && fMinRed != fMaxRed
+			|| colors[n]->green <= fMinGreen && fMinGreen != fMaxGreen
+			|| colors[n]->blue <= fMinBlue && fMinBlue!= fMaxBlue)
+		{
+			test = rand()%3;
+			*randoms[n] = test;
+		}
+		else if (colors[n]->red >= fMaxRed && fMinRed != fMaxRed
+			|| colors[n]->green >= fMaxGreen && fMinGreen != fMaxGreen
+			|| colors[n]->blue >= fMaxBlue && fMinBlue!= fMaxBlue)
+		{
+			test = 3+rand()%3;
+			*randoms[n] = test;
+		}
+		switch (test)
+		{
+			case 0: colors[n]->red++; break;
+			case 1: colors[n]->green++; break;
+			case 2: colors[n]->blue++; break;
+			case 3: colors[n]->red--; break;
+			case 4: colors[n]->green--; break;
+			case 5: colors[n]->blue--; break;
+		}
+	}
 }
 
 
@@ -116,6 +279,7 @@ TextClock::Reset()
 	TWELVE_ON = false;
 	OCLOCK_ON = false;
 }
+
 
 void
 TextClock::CheckTime()
@@ -146,15 +310,43 @@ TextClock::CheckTime()
 		MINUTES_ON = true;
 		TEN1_ON = true;
 	}
-	else if (min >= 15 && min < 30)
+	else if (min >= 15 && min < 20)
 	{
 		PAST_ON = true;
 		QUARTER_ON = true;
 	}
-	else if (min >= 30 && min < 45)
+	else if (min >= 20 && min < 25)
+	{
+		PAST_ON = true;
+		TWENTY_ON = true;
+		MINUTES_ON = true;
+	}
+	else if (min >= 25 && min < 30)
+	{
+		PAST_ON = true;
+		TWENTY_ON = true;
+		FIVE1_ON = true;
+		MINUTES_ON = true;
+	}
+	else if (min >= 30 && min < 35)
 	{
 		HALF_ON = true;
 		PAST_ON = true;
+	}
+	else if (min >= 35 && min < 40)
+	{
+		TWENTY_ON = true;
+		FIVE1_ON = true;
+		TO_ON = true;
+		MINUTES_ON = true;
+		hr++;
+	}
+	else if (min >= 40 && min < 45)
+	{
+		TWENTY_ON = true;
+		TO_ON = true;
+		MINUTES_ON = true;
+		hr++;
 	}
 	else if (min >= 45 && min < 50)
 	{
@@ -176,7 +368,6 @@ TextClock::CheckTime()
 		MINUTES_ON = true;
 		hr++;
 	}
-
 	if (fNow.Time().Hour() >= 12)
 		*hours[hr-12] = true;
 	else
@@ -200,18 +391,16 @@ TextClock::StartSaver(BView* view, bool preview)
 		&stringRect);
 	fSpace = stringRect.Width() + stringRect.Height();
 	// Get font shape + size
-
-	temp = "AM   PM    HALF   TEN";
+	temp = "IT   IS    HALF   TEN";
 	// Center the text
 	fDelta.nonspace = 0;
 	fDelta.space = 0;
-
 	font.GetBoundingBoxesForStrings(&temp, 1, B_SCREEN_METRIC, &fDelta,
 		&stringRect);
 	float y = ((viewHeight - (stringRect.Height() * 2 + viewHeight / 10)) / 2)
 		+ stringRect.Height();
 	fLeftCorner.Set(((viewWidth - stringRect.Width()) / 2) - stringRect.left, y/2);
-	SetTickSize(60000000); // Changes every minute
+	SetTickSize(fTickSpeed); // Changes every second
 	return B_OK;
 }
 
@@ -219,132 +408,177 @@ TextClock::StartSaver(BView* view, bool preview)
 void
 TextClock::Draw(BView* view, int32 frame)
 {
+	fFrame = frame;
 	CheckTime();
 	rgb_color kBlack = {0,0,0};
 	rgb_color kGray = {38,38,38};
 	rgb_color text;
 
 	if (frame == 0) {
+		NewColor();
+		UpdateColor();
 		view->SetHighColor(kBlack);
 		view->SetLowColor(kBlack);
 		view->FillRect(view->Bounds());
-		// Set text color
-		text = {200+rand()%55, 200+rand()%55, 200+rand()%55};
-		view->SetHighColor(text);
-		view->DrawString(IT, fLeftCorner, 0);
 	}
-	text = {200+rand()%55, 200+rand()%55, 200+rand()%55};
-	view->SetHighColor(text);
+	view->SetHighColor(fTextColor1);
+	view->DrawString(IT, fLeftCorner, 0);
 	BPoint copy = fLeftCorner;
 	copy.Set(fLeftCorner.x + fSpace, fLeftCorner.y);
 	view->DrawString(IS, copy, 0);
+	UpdateColor();
 	// Here is where things get messy...
 	// I think I could use some loops here... but the spacing between words
 	// are rather inconsistent...
 
 	// The "fSpace * NUMBER" parts were a result of a painful trial and error.
-	HALF_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	HALF_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	copy += BPoint(fSpace, 0);
 	view->DrawString(HALF, copy, 0);
 
-	TEN1_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	TEN1_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
-	copy += BPoint(fSpace * 3, 0);
+	copy += BPoint(fSpace * 3.1, 0);
 	view->DrawString(TEN1, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	QUARTER_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	QUARTER_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(QUARTER, copy, 0);
 
-	TWENTY_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	TWENTY_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
-	copy += BPoint(fSpace * 3.5, 0);
+	copy += BPoint(fSpace * 3.6, 0);
 	view->DrawString(TWENTY, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	FIVE1_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	FIVE1_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(FIVE1, copy, 0);
 	copy += BPoint(fSpace * 2, 0);
 
-	MINUTES_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	MINUTES_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(MINUTES, copy, 0);
 	copy += BPoint(fSpace * 3.5, 0);
 
-	TO_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	TO_ON ? text = fTextColor3 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TO, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	PAST_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	PAST_ON ? text = fTextColor3 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(PAST, copy, 0);
 	copy += BPoint(fSpace * 2, 0);
 
-	TWO_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	TWO_ON ? text = fTextColor1 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TWO, copy, 0);
 	copy += BPoint(fSpace * 2.2, 0);
 
-	THREE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	THREE_ON ? text = fTextColor1 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(THREE, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	ONE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	ONE_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(ONE, copy, 0);
 	copy += BPoint(fSpace * 2.75, 0);
 
-	FOUR_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	FOUR_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(FOUR, copy, 0);
 	copy += BPoint(fSpace * 2.2, 0);
 
-	FIVE2_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	FIVE2_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(FIVE2, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	SIX_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	SIX_ON ? text = fTextColor3 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(SIX, copy, 0);
 	copy += BPoint(fSpace * 1.5, 0);
 
-	SEVEN_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	SEVEN_ON ? text = fTextColor3 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(SEVEN, copy, 0);
 	copy += BPoint(fSpace * 2.75, 0);
 
-	EIGHT_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	EIGHT_ON ? text = fTextColor3 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(EIGHT, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	NINE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	NINE_ON ? text = fTextColor1 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(NINE, copy, 0);
 	copy += BPoint(fSpace * 2, 0);
 
-	TEN2_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	TEN2_ON ? text = fTextColor1 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TEN2, copy, 0);
 	copy += BPoint(fSpace * 1.8, 0);
 
-	ELEVEN_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	ELEVEN_ON ? text = fTextColor1 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(ELEVEN, copy, 0);
 
 	copy.Set(fLeftCorner.x, copy.y + fSpace);
-	TWELVE_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	TWELVE_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	view->DrawString(TWELVE, copy, 0);
 
-	OCLOCK_ON ? text = {200+rand()%55, 200+rand()%55, 200+rand()%55} : text = kGray;
+	OCLOCK_ON ? text = fTextColor2 : text = kGray;
 	view->SetHighColor(text);
 	copy += BPoint(fSpace * 3.35, 0);
 	view->DrawString(OCLOCK, copy, 0);
+}
+
+
+void
+TextClock::MessageReceived(BMessage* msg)
+{
+	switch (msg->what) {
+	case kMinRed:
+		fMinRed = msg->GetInt32("be:value", fMinRed);
+		break;
+	case kMaxRed:
+		fMaxRed = msg->GetInt32("be:value", fMaxRed);
+		break;
+	case kMinGreen:
+		fMinGreen = msg->GetInt32("be:value", fMinGreen);
+		break;
+	case kMaxGreen:
+		fMaxGreen = msg->GetInt32("be:value", fMaxGreen);
+		break;
+	case kMinBlue:
+		fMinBlue = msg->GetInt32("be:value", fMinBlue);
+		break;
+	case kMaxBlue:
+		fMaxBlue = msg->GetInt32("be:value", fMaxBlue);
+		break;
+	case kTickSpeed:
+		fTickSpeed = msg->GetInt32("be:value", fTickSpeed);
+		break;
+	default:
+		BHandler::MessageReceived(msg);
+	}
+}
+
+
+status_t
+TextClock::SaveState(BMessage* into) const
+{
+	into->AddInt32("min_red", fMinRed);
+	into->AddInt32("max_red", fMaxRed);
+	into->AddInt32("min_blue", fMinBlue);
+	into->AddInt32("max_blue", fMaxBlue);
+	into->AddInt32("min_green", fMinGreen);
+	into->AddInt32("max_green", fMaxGreen);
+	into->AddInt32("tick_speed", fTickSpeed);
+	return B_OK;
 }

@@ -13,20 +13,24 @@
 #include <TimeFormat.h>
 #include <DateFormat.h>
 #include <DurationFormat.h>
-
+#include <Handler.h>
 
 class BMessage;
 class BView;
 
-class TextClock : public BScreenSaver {
+class TextClock : public BScreenSaver, public BHandler {
 public:
 								TextClock(BMessage* archive, image_id);
 
 			void				Draw(BView* view, int32 frame);
+			void				MessageReceived(BMessage*);
 			void				StartConfig(BView *view);
 			status_t			StartSaver(BView *view, bool preview);
+			status_t			SaveState(BMessage* into) const;
 			void				CheckTime();
 			void				Reset();
+			void				NewColor();
+			void				UpdateColor();
 			int32 				fSpace;
 
 private:
@@ -75,15 +79,35 @@ private:
 			bool			ELEVEN_ON;
 			bool			TWELVE_ON;
 			bool			OCLOCK_ON;
+			
+			int					fMinRed;
+			int					fMaxRed;
+			int					fMinBlue;
+			int					fMaxBlue;
+			int					fMinGreen;
+			int					fMaxGreen;
+			int					fTickSpeed;
 
 			BDateTime 			fNow;
-
+			rgb_color			fTextColor1;
+			rgb_color			fTextColor2;
+			rgb_color			fTextColor3;
+			
+			int					fColor1Duration;
+			int					fColor2Duration;
+			int					fColor3Duration;
+			
+			int					fRandom1;
+			int					fRandom2;
+			int					fRandom3;
+			
+			int 				fFrame;
 			BPoint				fLeftCorner;
 			escapement_delta	fDelta;
 
 			// What the screensaver looks like:
 			/*
-			AM PM  HALF TEN
+			IT IS  HALF TEN
 			QUARTER  TWENTY
 			FIVE MINUTES TO
 			PAST  TWO THREE

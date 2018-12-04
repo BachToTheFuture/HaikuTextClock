@@ -90,11 +90,11 @@ TextClock::TextClock(BMessage* archive, image_id id)
 	TWELVE_ON = false;
 	OCLOCK_ON = false;
 
-	fMinRed = 10;
+	fMinRed = 49;
 	fMaxRed = 255;
-	fMinBlue = 10;
+	fMinBlue = 49;
 	fMaxBlue = 255;
-	fMinGreen = 10;
+	fMinGreen = 49;
 	fMaxGreen = 255;
 	fTickSpeed = 10000;
 
@@ -139,35 +139,21 @@ void TextClock::StartConfig(BView* view)
 	s0->SetTarget(this);
 	s0->SetLimitLabels("Fast", "Slow");
 
-	s1 = new BSlider("min_red", "Red min", new BMessage(kMinRed), 1, 10, B_HORIZONTAL);
-	s1->SetValue(fMinRed);
-	s1->SetTarget(this);
-	s1->SetLimitLabels("0", "10");
 
-	s2 = new BSlider("max_red", "Red max", new BMessage(kMaxRed), 11, 254, B_HORIZONTAL);
+	s2 = new BSlider("max_red", "Red", new BMessage(kMaxRed), 50, 254, B_HORIZONTAL);
 	s2->SetValue(fMaxRed);
 	s2->SetTarget(this);
-	s2->SetLimitLabels("11", "255");
+	s2->SetLimitLabels("0", "255");
 
-	s3 = new BSlider("min_green", "Green min", new BMessage(kMinGreen), 1, 10, B_HORIZONTAL);
-	s3->SetValue(fMinGreen);
-	s3->SetTarget(this);
-	s3->SetLimitLabels("0", "10");
-
-	s4 = new BSlider("max_green", "Green max", new BMessage(kMaxGreen), 11, 254, B_HORIZONTAL);
+	s4 = new BSlider("max_green", "Green", new BMessage(kMaxGreen), 50, 254, B_HORIZONTAL);
 	s4->SetValue(fMaxGreen);
 	s4->SetTarget(this);
-	s4->SetLimitLabels("11", "255");
+	s4->SetLimitLabels("0", "255");
 
-	s5 = new BSlider("min_blue", "Blue min", new BMessage(kMinBlue), 0, 10, B_HORIZONTAL);
-	s5->SetValue(fMinBlue);
-	s5->SetTarget(this);
-	s5->SetLimitLabels("0", "10");
-
-	s6 = new BSlider("max_blue", "Blue max", new BMessage(kMaxBlue), 11, 254, B_HORIZONTAL);
+	s6 = new BSlider("max_blue", "Blue", new BMessage(kMaxBlue), 50, 254, B_HORIZONTAL);
 	s6->SetValue(fMaxBlue);
 	s6->SetTarget(this);
-	s6->SetLimitLabels("11", "255");
+	s6->SetLimitLabels("0", "255");
 
 
 	BLayoutBuilder::Group<>(view, B_VERTICAL, B_USE_ITEM_SPACING)
@@ -181,13 +167,10 @@ void TextClock::StartConfig(BView* view)
 		.Add(v3)
 		.Add(s0)
 		.AddGlue()
-		.Add(s1)
 		.Add(s2)
 		.AddGlue()
-		.Add(s3)
 		.Add(s4)
 		.AddGlue()
-		.Add(s5)
 		.Add(s6)
 		.AddGlue()
 		.End();

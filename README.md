@@ -4,7 +4,7 @@
 
 Design inspiration from https://github.com/brobergp/MMM-TextClock. Thank you, brobergp!
 
-![screenshot](screenshot2.png)
+![screenshot](screenshot1.png)
 
 ### How to install
 Simply run `make` and copy the binary to `/boot/home/config/non-packaged/add-ons/Screen Savers/`.

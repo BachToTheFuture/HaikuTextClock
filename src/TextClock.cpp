@@ -393,8 +393,8 @@ TextClock::Draw(BView* view, int32 frame)
 {
 	fFrame = frame;
 	CheckTime();
-	rgb_color kBlack = {0,0,0};
-	rgb_color kGray = {38,38,38};
+	rgb_color kBlack = {15,15,15};
+	rgb_color kGray = {25,25,25};
 	rgb_color text;
 
 	if (frame == 0) {

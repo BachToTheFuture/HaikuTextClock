@@ -12,9 +12,9 @@ Simply run `make` and copy the binary to `/boot/home/config/non-packaged/add-ons
 ### How to use
 Moving the tick speed slider changes the speed of the color change.
 
-Move the red, green, or blue's max or min sliders around to get desired colors.
+Move the red, green, or blue slider around to get the desired colors.
 
-To disable a certain color, simply slide the color's max and min sliders to the left.
+To disable a certain color, simply slide the color's slider all the way to the left.
 
 
 
